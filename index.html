@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillHub Engineering</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="backdrop-grid"></div>
+      <div class="aurora aurora-a"></div>
+      <div class="aurora aurora-b"></div>
+
+      <main class="app-frame">
+        <section id="auth-view" class="auth-layout">
+          <div class="hero-copy glass-card">
+            <span class="eyebrow">Template A · Engineering Learning Platform</span>
+            <h1>SkillHub Engineering</h1>
+            <p class="lead">
+              A full-stack learning workspace for engineering students and teachers with role-based login,
+              subject dashboards, quizzes, study streaks, timer tools, and your attached note library.
+            </p>
+
+            <div class="hero-stats">
+              <article>
+                <strong>6</strong>
+                <span>engineering subjects</span>
+              </article>
+              <article>
+                <strong>AI</strong>
+                <span>summary, explain, quiz support</span>
+              </article>
+              <article>
+                <strong>Notes</strong>
+                <span>seeded plus attached library</span>
+              </article>
+            </div>
+
+            <div class="demo-block">
+              <p class="demo-title">Demo accounts</p>
+              <div class="demo-creds">
+                <div>
+                  <span>Teacher</span>
+                  <code>teacher@skillhub.dev / teacher123</code>
+                </div>
+                <div>
+                  <span>Student</span>
+                  <code>student@skillhub.dev / student123</code>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-card glass-card">
+            <div class="tab-strip">
+              <button id="login-tab" class="tab-button active" type="button">Login</button>
+              <button id="signup-tab" class="tab-button" type="button">Signup</button>
+            </div>
+
+            <form id="login-form" class="auth-form">
+              <h2>Welcome back</h2>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="student@skillhub.dev" required />
+              </label>
+              <label>
+                Password
+                <input type="password" name="password" placeholder="Enter password" required />
+              </label>
+              <button class="primary-button" type="submit">Login to dashboard</button>
+            </form>
+
+            <form id="signup-form" class="auth-form hidden">
+              <h2>Create account</h2>
+              <label>
+                Full name
+                <input type="text" name="name" placeholder="Your name" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" placeholder="you@example.com" required />
+              </label>
+              <label>
+                Password
+                <input type="password" name="password" placeholder="Choose password" required />
+              </label>
+              <label>
+                Role
+                <select name="role" required>
+                  <option value="student">Student</option>
+                  <option value="teacher">Teacher</option>
+                </select>
+              </label>
+              <label>
+                Branch
+                <input type="text" name="branch" placeholder="Computer Science" />
+              </label>
+              <button class="primary-button" type="submit">Create account</button>
+            </form>
+
+            <p id="auth-message" class="status-text"></p>
+          </div>
+        </section>
+
+        <section id="dashboard-view" class="dashboard-layout hidden">
+          <header class="topbar glass-card">
+            <div>
+              <span class="eyebrow">Engineering Productivity Suite</span>
+              <h2 id="welcome-title">Dashboard</h2>
+            </div>
+            <div class="topbar-actions">
+              <div id="user-pill" class="user-pill"></div>
+              <button id="logout-button" class="secondary-button" type="button">Logout</button>
+            </div>
+          </header>
+
+          <div id="dashboard-content" class="dashboard-content"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/restored-app.js" defer></script>
+  </body>
+</html>
