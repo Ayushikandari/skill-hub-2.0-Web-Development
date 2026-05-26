@@ -1,0 +1,172 @@
+# Brute force
+"""
+Check from every cell
+Time : O((M*N)^2)
+"""
+
+
+"""
+Q meaning: you have to return all that grid in a 2D matrix from which water can flow to both pacific and atlantic ocean
+we are going reverse i.e from ocean to the cells
+so curr height of cell should be >= preHeight of the cell
+logic: find the cell that can reach the pacific and atlantic respectively and 
+at last find the cell that can reach both and add them into the ans
+
+very better logic as we are going from ocean to the cell then for next adjacent node, 
+we will have to check with height of preCell only, if height >= to  preCell than the curr cell can also reach the respective ocean
+exactly  same as "No of island", only change in height checking condition
+
+time: O(m*n), space: O(m*n)
+"""
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        row, col= len(heights), len(heights[0])
+        pac, atl= set(),set()
+        
+        def DFS(r,c,visited,preHeight):
+            if r<0 or r>=row or c<0 or c>=col or (r,c) in visited or heights[r][c] < preHeight:
+                return
+            # now means this cell can reach the ocean so add in the visited 
+            visited.add((r,c))
+            directions= [[-1,0],[1,0],[0,-1],[0,1]]    # up,down,left,right
+            for dr,dc in directions:
+                r1,c1= r+dr, c+dc
+                DFS(r1,c1,visited,heights[r][c])
+        
+        # code starts from here
+        # cells that are in the 1st and last row can reach the pacific and atlantic respectively
+        for c in range(col):
+            DFS(0, c, pac, heights[0][c])  # 1st row. since equal distance is also allowed so passed the height of 1st cell as preHeight
+            DFS(row-1, c, atl,heights[row-1][c])  # last row
+            
+        # cells that are in the 1st  and last col can reach the pacific and atlantic respectively   
+        for r in range(row):
+            DFS(r, 0, pac, heights[r][0])           # 1st column
+            DFS(r, col-1, atl, heights[r][col-1])   # last column
+
+        # now find out the cells that are present in both pacific and atlantic cell and them into ans
+        return list(pac & atl)    # Take intersection of both sets
+
+
+# method 2: By Bfs using same logic as we did in case of "No of island"
+
+from collections import deque
+
+class Solution:
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        # 1. Edge Case: Check for empty grid
+        if not heights or not heights[0]:
+            return []
+            
+        row, col = len(heights), len(heights[0])
+        
+        # 2. Initialize Queues for BFS and Sets to track reachability
+        pacific_q = deque()
+        atlantic_q = deque()
+        visited_pacific = set()
+        visited_atlantic = set()
+
+        # 3. Boundary Initialization (Multi-Source BFS Start Points)
+        # We start from the cells touching the oceans and "climb" up.
+        
+        # Left (Pacific) and Right (Atlantic) boundaries
+        for r in range(row):
+            # Pacific: First Column
+            pacific_q.append((heights[r][0], r, 0))
+            visited_pacific.add((r, 0))
+            # Atlantic: Last Column
+            atlantic_q.append((heights[r][col - 1], r, col - 1))
+            visited_atlantic.add((r, col - 1))
+            
+        # Top (Pacific) and Bottom (Atlantic) boundaries
+        for c in range(col):
+            # Pacific: First Row
+            if (0, c) not in visited_pacific: # Avoid adding corner twice
+                pacific_q.append((heights[0][c], 0, c))
+                visited_pacific.add((0, c))
+            # Atlantic: Last Row
+            if (row - 1, c) not in visited_atlantic: # Avoid adding corner twice
+                atlantic_q.append((heights[row - 1][c], row - 1, c))
+                visited_atlantic.add((row - 1, c))
+
+        directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+
+        # 4. BFS Logic: Explore "upward" (height >= cur_height)
+        def bfs(queue, visited):
+            while queue:
+                # We can remove 'for i in range(len(queue))' unless we need level-order
+                cur_height, r, c = queue.popleft()
+                
+                for dr, dc in directions:
+                    nr, nc = r + dr, c + dc
+                    
+                    # Boundary Check + Visited Check + Elevation Check
+                    # Water can flow DOWN to the ocean if neighbor is HIGHER or EQUAL
+                    if 0 <= nr < row and 0 <= nc < col and \
+                       (nr, nc) not in visited and \
+                       heights[nr][nc] >= cur_height:
+                        
+                        visited.add((nr, nc))
+                        queue.append((heights[nr][nc], nr, nc))
+
+        # Perform BFS for both oceans
+        bfs(pacific_q, visited_pacific)
+        bfs(atlantic_q, visited_atlantic)
+
+        # 5. Intersection: Find cells reachable from BOTH sets
+        return list(visited_pacific & visited_atlantic) 
+
+
+# Java
+"""
+// Method 1:
+
+public class Solution {
+    private int row, col;
+    private int[][] heights;
+    private Set<List<Integer>> pacific;
+    private Set<List<Integer>> atlantic;
+    private int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // up, down, left, right
+
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+        this.row = heights.length;
+        this.col = heights[0].length;
+        this.heights = heights;
+        this.pacific = new HashSet<>();
+        this.atlantic = new HashSet<>();
+
+        for (int c = 0; c < col; c++) {
+            dfs(0, c, pacific, heights[0][c]);
+            dfs(row - 1, c, atlantic, heights[row - 1][c]);
+        }
+
+        for (int r = 0; r < row; r++) {
+            dfs(r, 0, pacific, heights[r][0]);
+            dfs(r, col - 1, atlantic, heights[r][col - 1]);
+        }
+
+        List<List<Integer>> result = new ArrayList<>();
+        for (List<Integer> cell : pacific) {
+            if (atlantic.contains(cell)) {
+                result.add(cell);
+            }
+        }
+
+        return result;
+    }
+
+    private void dfs(int r, int c, Set<List<Integer>> visited, int prevHeight) {
+        if (r < 0 || r >= row || c < 0 || c >= col || visited.contains(Arrays.asList(r, c)) || heights[r][c] < prevHeight) {
+            return;
+        }
+
+        visited.add(Arrays.asList(r, c));
+        for (int[] direction : directions) {
+            int newRow = r + direction[0];
+            int newCol = c + direction[1];
+            dfs(newRow, newCol, visited, heights[r][c]);
+        }
+    }
+}
+
+"""
